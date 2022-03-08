@@ -34,4 +34,4 @@ build:
     - "torchvision==0.11.3"
 
   # commands run after the environment is setup
-  run: cog_predictor.py:CLDSampler
+  run: "cog_predictor.py:CLDSampler"
