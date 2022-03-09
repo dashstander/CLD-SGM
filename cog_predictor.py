@@ -8,7 +8,7 @@ import util.utils as utils
 import models.utils as mutils
 import torch
 from torchvision.utils import make_grid
-from typing import Dict
+from typing import Dict, Optional
 import numpy as np
 import matplotlib.pyplot as plt
 import gc
@@ -20,7 +20,7 @@ class SamplerConfig:
     # Sampling
     sampling_method: str = 'sscs' # choices=['ode', 'em', 'sscs'],
     sampling_solver: str = 'scipy_solver'
-    sampling_solver_options: Dict[str, str] = {'solver': 'RK45'}
+    sampling_solver_options: Optional[Dict[str, str]] = None
     sampling_rtol: float = 1e-5
     sampling_atol: float = 1e-5
     sscs_num_stab: float = 0.0
@@ -29,6 +29,10 @@ class SamplerConfig:
     striding: str = 'linear' # choices=['linear', 'quadratic', 'logarithmic']
     sampling_eps: float = 1e-5 # TODO: What is this?
     sscs_num_stab: float = 1e-9
+
+    def __post_init__(self):
+        if self.sampling_solver_options is None:
+            self.sampling_solver_options = = {'solver': 'RK45'}
 
 
 def get_model_and_config(model: str, device: torch.Device):
