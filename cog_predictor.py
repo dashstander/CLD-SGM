@@ -32,10 +32,10 @@ class SamplerConfig:
 
     def __post_init__(self):
         if self.sampling_solver_options is None:
-            self.sampling_solver_options = = {'solver': 'RK45'}
+            self.sampling_solver_options = {'solver': 'RK45'}
 
 
-def get_model_and_config(model: str, device: torch.Device):
+def get_model_and_config(model: str, device: str):
     parser = ConfigParser()
     if model == 'cifar10':
         cc = 'configs/default_cifar10.txt'
@@ -77,7 +77,7 @@ class CLDSampler(cog.BasePredictor):
         plt.axis('off')
         plt.imsave(filepath, image_grid.permute(1, 2, 0).cpu())
         
-    def sample(
+    def predict(
         self,
         model_name: str = cog.Input(choices=['cifar10', 'celeba_hq_256']),
         n_samples: int = cog.Input(default=16, ge=1, le=64),
