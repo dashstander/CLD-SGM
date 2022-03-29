@@ -37,7 +37,7 @@ class SamplerConfig:
 
 
 def get_model_and_config(model: str, device: str):
-    parser = ConfigParser()
+    config = ConfigParser()
     if model == 'cifar10':
         cc = 'configs/default_cifar10.txt'
         sc = 'configs/specific_cifar10.txt'
@@ -46,7 +46,7 @@ def get_model_and_config(model: str, device: str):
         cc = 'configs/default_celeba_paper.txt'
         sc = 'configs/specific_celeba_paper.txt'
         ckpt_path = 'checkpoints/celebahq256_600000.pth'
-    config = parser.read([cc, sc])
+    config.read([cc, sc])
     config['checkpoint'] = ckpt_path
     beta_fn = utils.build_beta_fn(config)
     beta_int_fn = utils.build_beta_int_fn(config)
