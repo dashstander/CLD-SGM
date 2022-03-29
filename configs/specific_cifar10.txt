@@ -1,4 +1,5 @@
 # Model
+[default]
 name                = ncsnpp
 normalization       = GroupNorm
 nonlinearity        = swish

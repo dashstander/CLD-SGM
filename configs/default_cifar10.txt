@@ -1,4 +1,5 @@
 # Data
+[default]
 dataset             = cifar10
 is_image            = true
 image_size          = 32
