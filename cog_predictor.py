@@ -1,6 +1,7 @@
 from secrets import choice
 from configparser import ConfigParser
 from dataclasses import dataclass
+from wsgiref.simple_server import WSGIRequestHandler
 import sde_lib
 import sampling
 import util.utils as utils
@@ -46,7 +47,7 @@ def get_model_and_config(model: str, device: str):
         sc = 'configs/specific_celeba_paper.txt'
         ckpt_path = 'checkpoints/celebahq256_600000.pth'
     config = parser.read([cc, sc])
-    config.set('checkpoint', ckpt_path)
+    config['checkpoint'] = ckpt_path
     beta_fn = utils.build_beta_fn(config)
     beta_int_fn = utils.build_beta_int_fn(config)
     sde = sde_lib.CLD(config, beta_fn, beta_int_fn)
