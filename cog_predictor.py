@@ -18,6 +18,7 @@ import cog
 
 @dataclass
 class ModelConfig:
+    checkpoint: str = "checkpoints/cifar10_800000.pth"
     dataset: str = "cifar10"
     is_image: bool = True
     image_size: int = 32
@@ -118,7 +119,7 @@ def get_model_and_config(model: str, device: str):
         sc = 'configs/specific_celeba_paper.txt'
         ckpt_path = 'checkpoints/celebahq256_600000.pth'
     config.read([cc, sc])
-    config['checkpoint'] = ckpt_path
+    config.set('checkpoint', ckpt_path)
     model_config = ModelConfig(**{k: v for k, v in config.items('default')})
     beta_fn = utils.build_beta_fn(model_config)
     beta_int_fn = utils.build_beta_int_fn(model_config)
