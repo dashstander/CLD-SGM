@@ -122,7 +122,7 @@ def get_model_and_config(model: str, device: str):
     config.set('default', 'checkpoint', ckpt_path)
     config_values = {k: v for k, v in config.items('default')}
     for k, v in config_values.items():
-        print(f'{k}: {v}:')
+        print(f'{k}: {v} and v is a string {isinstance(v, str)}')
     model_config = ModelConfig(**config_values)
     beta_fn = utils.build_beta_fn(model_config)
     beta_int_fn = utils.build_beta_int_fn(model_config)
