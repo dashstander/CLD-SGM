@@ -1,6 +1,4 @@
-from secrets import choice
-from configparser import ConfigParser
-from dataclasses import dataclass
+import dataclasses
 import sde_lib
 import sampling
 import util.utils as utils
@@ -13,12 +11,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import gc
 import cog
+import yaml
 
 
-
-@dataclass
+@dataclasses.dataclass
 class ModelConfig:
-    checkpoint: str = "checkpoints/cifar10_800000.pth"
     dataset: str = "cifar10"
     is_image: bool = True
     image_size: int = 32
@@ -77,18 +74,19 @@ class ModelConfig:
     m_inv               = 4.0
     gamma               = 0.04
     # Optimization
-    optimizer           = "Adam"
-    learning_rate       = 2e-4
-    grad_clip           = 1.0
-    dropout             = 0.1
-    weight_decay        = 0.0
+    optimizer: str = "Adam"
+    learning_rate: float = 2e-4
+    grad_clip: float = 1.0
+    dropout: float = 0.1
+    weight_decay: float = 0.0
     # Objective
-    cld_objective       = "hsm"
-    loss_eps            = 1e-5
-    weighting           = "reweightedv2"
+    cld_objective: str = "hsm"
+    loss_eps: float = 1e-5
+    weighting: str = "reweightedv2"
+    checkpoint: str = "checkpoints/cifar10_800000.pth"
 
 
-@dataclass
+@dataclasses.dataclass
 class SamplerConfig:
     # Sampling
     sampling_method: str = 'sscs' # choices=['ode', 'em', 'sscs'],
@@ -109,21 +107,9 @@ class SamplerConfig:
 
 
 def get_model_and_config(model: str, device: str):
-    config = ConfigParser()
-    if model == 'cifar10':
-        cc = 'configs/default_cifar10.txt'
-        sc = 'configs/specific_cifar10.txt'
-        ckpt_path = 'checkpoints/cifar10_800000.pth'
-    elif model == 'celeba_hq_256':
-        cc = 'configs/default_celeba_paper.txt'
-        sc = 'configs/specific_celeba_paper.txt'
-        ckpt_path = 'checkpoints/celebahq256_600000.pth'
-    config.read([cc, sc])
-    config.set('default', 'checkpoint', ckpt_path)
-    config_values = {k: v for k, v in config.items('default')}
-    for k, v in config_values.items():
-        print(f'{k}: {v} and v is a string {isinstance(v, str)}')
-    model_config = ModelConfig(**config_values)
+    with open(f'configs/{model}_cog.yaml', mode='r') as config_file:
+        config = yaml.safe_load(config_file)
+    model_config = ModelConfig(**config)
     beta_fn = utils.build_beta_fn(model_config)
     beta_int_fn = utils.build_beta_int_fn(model_config)
     sde = sde_lib.CLD(model_config, beta_fn, beta_int_fn)
