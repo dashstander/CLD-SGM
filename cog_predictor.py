@@ -120,7 +120,10 @@ def get_model_and_config(model: str, device: str):
         ckpt_path = 'checkpoints/celebahq256_600000.pth'
     config.read([cc, sc])
     config.set('default', 'checkpoint', ckpt_path)
-    model_config = ModelConfig(**{k: v for k, v in config.items('default')})
+    config_values = {k: v for k, v in config.items('default')}
+    for k, v in config_values.items():
+        print(f'{k}: {v}:')
+    model_config = ModelConfig(**config_values)
     beta_fn = utils.build_beta_fn(model_config)
     beta_int_fn = utils.build_beta_int_fn(model_config)
     sde = sde_lib.CLD(model_config, beta_fn, beta_int_fn)
