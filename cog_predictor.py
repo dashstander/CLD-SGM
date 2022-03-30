@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 import dataclasses
 import sde_lib
 import sampling
@@ -45,34 +46,34 @@ class ModelConfig:
     sampling_eps: float = 1e-3
     denoising: bool = True
     name: str = "ncsnpp"
-    normalization = "GroupNorm"
-    nonlinearity  = "swish"
-    n_channels    = 128
-    ch_mult = (1, 2, 2, 2)
-    attn_resolutions = 16
-    resamp_with_conv = True
-    use_fir = True
-    fir_kernel = (1, 3, 3, 1)
-    skip_rescale  = True
-    resblock_type = "biggan"
-    progressive = None
-    progressive_input = "residual"
-    progressive_combine = "sum"
-    attention_type = "ddpm"
-    init_scale = 0.0
-    fourier_scale = 16
-    conv_size = 3
-    embedding_type = "fourier"
-    mixed_score = True
-    n_resblocks = 8
-    ema_rate = 0.9999
-    numerical_eps = 1e-9
-    sde = "cld"
-    beta_type = "linear"
-    beta0 = 4.0
-    beta1 = 0.0
-    m_inv = 4.0
-    gamma = 0.04
+    normalization: str = "GroupNorm"
+    nonlinearity: str = "swish"
+    n_channels: str = 128
+    ch_mult: Sequence[int] = (1, 2, 2, 2)
+    attn_resolutions: int = 16
+    resamp_with_conv: bool = True
+    use_fir: bool = True
+    fir_kernel: Sequence[int] = (1, 3, 3, 1)
+    skip_rescale: bool = True
+    resblock_type: str = "biggan"
+    progressive: Optional[str] = None
+    progressive_input: str = "residual"
+    progressive_combine: str = "sum"
+    attention_type: str = "ddpm"
+    init_scale: float = 0.0
+    fourier_scale: int = 16
+    conv_size: int = 3
+    embedding_type: str = "fourier"
+    mixed_score: bool = True
+    n_resblocks: int = 8
+    ema_rate: float = 0.9999
+    numerical_eps: float = 1e-9
+    sde: str = "cld"
+    beta_type: str = "linear"
+    beta0: float = 4.0
+    beta1: float = 0.0
+    m_inv: float = 4.0
+    gamma: float = 0.04
     # Optimization
     optimizer: str = "Adam"
     learning_rate: float = 2e-4
