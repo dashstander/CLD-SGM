@@ -1,7 +1,6 @@
 from secrets import choice
 from configparser import ConfigParser
 from dataclasses import dataclass
-from wsgiref.simple_server import WSGIRequestHandler
 import sde_lib
 import sampling
 import util.utils as utils
@@ -14,6 +13,78 @@ import numpy as np
 import matplotlib.pyplot as plt
 import gc
 import cog
+
+
+
+@dataclass
+class ModelConfig:
+    dataset: str = "cifar10"
+    is_image: bool = True
+    image_size: int = 32
+    center_image: bool = True
+    image_channels: int = 3
+    # Training
+    snapshot_freq: int = 10000
+    snapshot_threshold: int = 1
+    log_freq: int = 5000
+    eval_freq: int = 20000
+    likelihood_threshold: int = 2000000
+    likelihood_freq: int = 50000
+    fid_freq: int = 50000
+    fid_threshold: int = 100000
+    fid_samples_training: int = 20000
+    n_eval_batches: int = 1
+    n_likelihood_batches: int = 1
+    n_warmup_iters: int = 100000
+    n_train_iters: int = 800000
+    save_freq: int  = 50000
+    save_threshold: int = 300000
+    # Autocast
+    autocast_train: bool = True
+    autocast_eval: bool = True
+    # Sampling
+    sampling_method: str = "ode"
+    sampling_eps: float = 1e-3
+    denoising: bool = True
+    name                = "ncsnpp"
+    normalization       = "GroupNorm"
+    nonlinearity        = "swish"
+    n_channels          = 128
+    ch_mult             = (1, 2, 2, 2)
+    attn_resolutions    = 16
+    resamp_with_conv    = True
+    use_fir             = True
+    fir_kernel          = (1, 3, 3, 1)
+    skip_rescale        = True
+    resblock_type       = "biggan"
+    progressive         = None
+    progressive_input   = "residual"
+    progressive_combine = "sum"
+    attention_type      = "ddpm"
+    init_scale          = 0.0
+    fourier_scale       = 16
+    conv_size           = 3
+    embedding_type      = "fourier"
+    mixed_score         = True
+    n_resblocks         = 8
+    ema_rate            = 0.9999
+    numerical_eps       = 1e-9
+    sde                 = "cld"
+    beta_type           = "linear"
+    beta0               = 4.0
+    beta1               = 0.0
+    m_inv               = 4.0
+    gamma               = 0.04
+    # Optimization
+    optimizer           = "Adam"
+    learning_rate       = 2e-4
+    grad_clip           = 1.0
+    dropout             = 0.1
+    weight_decay        = 0.0
+    # Objective
+    cld_objective       = "hsm"
+    loss_eps            = 1e-5
+    weighting           = "reweightedv2"
 
 
 @dataclass
@@ -48,13 +119,14 @@ def get_model_and_config(model: str, device: str):
         ckpt_path = 'checkpoints/celebahq256_600000.pth'
     config.read([cc, sc])
     config['checkpoint'] = ckpt_path
-    beta_fn = utils.build_beta_fn(config)
-    beta_int_fn = utils.build_beta_int_fn(config)
-    sde = sde_lib.CLD(config, beta_fn, beta_int_fn)
+    model_config = ModelConfig(**{k: v for k, v in config.items('default')})
+    beta_fn = utils.build_beta_fn(model_config)
+    beta_int_fn = utils.build_beta_int_fn(model_config)
+    sde = sde_lib.CLD(model_config, beta_fn, beta_int_fn)
     #@title Setting up the score model
-    score_model = mutils.create_model(config).to(device)
+    score_model = mutils.create_model(model_config).to(device)
     score_model.eval()
-    return sde, score_model, config
+    return sde, score_model, model_config
 
 
 class CLDSampler(cog.BasePredictor):
