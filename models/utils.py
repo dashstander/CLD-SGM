@@ -31,7 +31,11 @@ def register_model(cls=None, *, name=None):
 
 
 def get_model(name):
-    return _MODELS[name]
+    try:
+        return _MODELS[name]
+    except KeyError as ke:
+        print(_MODELS)
+        raise ke
 
 
 def create_model(config):
