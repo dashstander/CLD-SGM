@@ -48,11 +48,11 @@ class ModelConfig:
     normalization: str = "GroupNorm"
     nonlinearity: str = "swish"
     n_channels: str = 128
-    ch_mult: Sequence[int] = (1, 2, 2, 2)
+    ch_mult: str = "1,2,2,2"
     attn_resolutions: int = 16
     resamp_with_conv: bool = True
     use_fir: bool = True
-    fir_kernel: Sequence[int] = (1, 3, 3, 1)
+    fir_kernel: str = "1,3,3,1"
     skip_rescale: bool = True
     resblock_type: str = "biggan"
     progressive: Optional[str] = None
