@@ -1,4 +1,3 @@
-from collections.abc import Sequence
 import dataclasses
 import sde_lib
 import sampling
@@ -7,7 +6,7 @@ import util.utils as utils
 import models.utils as mutils
 import torch
 from torchvision.utils import make_grid
-from typing import Dict, Optional
+from typing import Dict, Optional, Sequence
 import numpy as np
 import matplotlib.pyplot as plt
 import gc
