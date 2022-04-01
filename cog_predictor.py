@@ -113,7 +113,7 @@ class SamplerConfig:
 def get_model_and_config(model: str, device: str):
     with open(f'configs/{model}_cog.yaml', mode='r') as config_file:
         config = yaml.safe_load(config_file)
-    model_config = ModelConfig.from_config(**config)
+    model_config = ModelConfig.from_config(config)
     beta_fn = utils.build_beta_fn(model_config)
     beta_int_fn = utils.build_beta_int_fn(model_config)
     sde = sde_lib.CLD(model_config, beta_fn, beta_int_fn)
