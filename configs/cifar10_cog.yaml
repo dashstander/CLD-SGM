@@ -36,7 +36,7 @@ use_fir: True
 fir_kernel: 1,3,3,1
 skip_rescale : True
 resblock_type: "biggan"
-progressive: null
+progressive: none
 progressive_input: "residual"
 progressive_combine: "sum"
 attention_type: "ddpm"
