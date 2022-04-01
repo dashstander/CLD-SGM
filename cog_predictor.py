@@ -49,7 +49,7 @@ class ModelConfig:
     nonlinearity: str = "swish"
     n_channels: str = 128
     ch_mult: str = "1,2,2,2"
-    attn_resolutions: int = 16
+    attn_resolutions: str = "16"
     resamp_with_conv: bool = True
     use_fir: bool = True
     fir_kernel: str = "1,3,3,1"
@@ -113,7 +113,7 @@ class SamplerConfig:
 def get_model_and_config(model: str, device: str):
     with open(f'configs/{model}_cog.yaml', mode='r') as config_file:
         config = yaml.safe_load(config_file)
-    model_config = ModelConfig.from_config(config)
+    model_config = ModelConfig(**config)
     beta_fn = utils.build_beta_fn(model_config)
     beta_int_fn = utils.build_beta_int_fn(model_config)
     sde = sde_lib.CLD(model_config, beta_fn, beta_int_fn)
