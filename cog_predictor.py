@@ -84,6 +84,7 @@ class ModelConfig:
     loss_eps: float = 1e-5
     weighting: str = "reweightedv2"
     checkpoint: str = "checkpoints/cifar10_800000.pth"
+    device: str = 'cuda:0'
 
     @classmethod
     def from_config(cls, config):

@@ -74,3 +74,5 @@ weight_decay : 0.01
 cld_objective: hsm
 loss_eps: 0.001
 weighting : reweightedv2
+checkpoint: checkpoints/celebahq256_600000.pth
+device: "cuda:0"
