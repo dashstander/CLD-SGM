@@ -89,6 +89,10 @@ class ModelConfig:
     def from_config(cls, config):
         return cls(**{k: str(v) for k, v in config.items()})
 
+    def __post_init__(self):
+        if self.progressive == 'None':
+            self.progressive = None
+
 
 @dataclasses.dataclass
 class SamplerConfig:
@@ -148,9 +152,9 @@ class CLDSampler(cog.BasePredictor):
         self,
         model_name: str = cog.Input(choices=['cifar10', 'celeba_hq_256']),
         n_samples: int = cog.Input(default=16, ge=1, le=64),
-        sampler: str = cog.Input(choices=['Symmetric Splitting CLD Sampler', 'Euler Maruyama']),
+        sampler: str = cog.Input(choices=['Symmetric Splitting CLD Sampler', 'Euler Maruyama'], default='Symmetric Splitting CLD Sampler'),
         n_sampling_steps: int = cog.Input(description='Number of steps to sample for', default=500, ge=1, le=750),
-        time_step_striding_type: str = cog.Input(choices=['linear', 'quadratic', 'logarithmic'])
+        time_step_striding_type: str = cog.Input(choices=['linear', 'quadratic', 'logarithmic'], default='linear')
     ) -> cog.Path:
         """Run a single prediction on the model"""
         sde, score_model, model_config = get_model_and_config(model_name, self.device)
