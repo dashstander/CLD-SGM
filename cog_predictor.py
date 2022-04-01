@@ -4,6 +4,7 @@ import sampling
 import util.utils as utils
 from models import ncsnpp
 import models.utils as mutils
+from omegaconf import OmegaConf
 import torch
 from torchvision.utils import make_grid
 from typing import Dict, Optional
@@ -116,9 +117,7 @@ class SamplerConfig:
 
 
 def get_model_and_config(model: str, device: str):
-    with open(f'configs/{model}_cog.yaml', mode='r') as config_file:
-        config = yaml.safe_load(config_file)
-    model_config = ModelConfig(**config)
+    config = OmegaConf.load(f'configs/{model}_cog.yaml')
     beta_fn = utils.build_beta_fn(model_config)
     beta_int_fn = utils.build_beta_int_fn(model_config)
     sde = sde_lib.CLD(model_config, beta_fn, beta_int_fn)
@@ -159,16 +158,18 @@ class CLDSampler(cog.BasePredictor):
     ) -> cog.Path:
         """Run a single prediction on the model"""
         sde, score_model, model_config = get_model_and_config(model_name, self.device)
-        sampling_config = SamplerConfig()
-        sampling_config.sampling_method = self.sampling_methods[sampler]
-        sampling_config.n_discrete_steps = n_sampling_steps
-        sampling_config.striding = time_step_striding_type
+        sampling_config = SamplerConfig(
+            sampling_method=self.sampling_methods[sampler],
+            n_discrete_steps=n_sampling_steps,
+            striding=time_step_striding_type
+        )
+        config = OmegaConf.merge(model_config, OmegaConf.from_structured(sampling_config))
         sampling_shape = (n_samples, 3, 32, 32)
-        sampler = sampling.get_sampling_fn(sampling_config, sde, sampling_shape, sampling_config.sampling_eps)
+        sampler = sampling.get_sampling_fn(config, sde, sampling_shape, sampling_config.sampling_eps)
         x, _, _ = sampler(score_model)
         fp = './samples.png'
         plt.figure(figsize=(8, 8))
-        self.save_samples(fp, x, model_config)
+        self.save_samples(fp, x, config)
         gc.collect()
         if torch.cuda.is_available():
             torch.cuda.empty_cache()

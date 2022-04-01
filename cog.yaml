@@ -23,6 +23,7 @@ build:
         - "matplotlib==3.5.1"
         - "ninja==1.10.2.3"
         - "numpy==1.22.3"
+        - "omegaconf==2.1.1"
         - "Pillow==9.0.1"
         - 'PyYAML==6.0'
         - "scikit_learn==1.0.2"
