@@ -6,7 +6,7 @@ from models import ncsnpp
 import models.utils as mutils
 import torch
 from torchvision.utils import make_grid
-from typing import Dict, Optional, Sequence
+from typing import Dict, Optional
 import numpy as np
 import matplotlib.pyplot as plt
 import gc
@@ -85,6 +85,10 @@ class ModelConfig:
     weighting: str = "reweightedv2"
     checkpoint: str = "checkpoints/cifar10_800000.pth"
 
+    @classmethod
+    def from_config(cls, config):
+        return cls(**{k: str(v) for k, v in config.items()})
+
 
 @dataclasses.dataclass
 class SamplerConfig:
@@ -109,7 +113,7 @@ class SamplerConfig:
 def get_model_and_config(model: str, device: str):
     with open(f'configs/{model}_cog.yaml', mode='r') as config_file:
         config = yaml.safe_load(config_file)
-    model_config = ModelConfig(**config)
+    model_config = ModelConfig.from_config(**config)
     beta_fn = utils.build_beta_fn(model_config)
     beta_int_fn = utils.build_beta_int_fn(model_config)
     sde = sde_lib.CLD(model_config, beta_fn, beta_int_fn)
